@@ -1,0 +1,3 @@
+= Lazy-data-api
+
+Fetch/send data from/to other applications.
