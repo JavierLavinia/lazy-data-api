@@ -32,6 +32,10 @@ module LazyDataApi
       def save_api_relation
         lazy_data_api_relation.save if lazy_data_api_relation.changed?
       end
+
+      def to_api
+        as_json methods: :api_id, except: [:id, :created_at, :updated_at]
+      end
     end
   end
 end

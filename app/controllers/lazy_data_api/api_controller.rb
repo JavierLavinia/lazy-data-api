@@ -4,7 +4,7 @@ module LazyDataApi
 
     def show
       render_params =  if @resource
-        { json: @resource.to_json }
+        { json: @resource.to_api }
       else
         { nothing: true, status: :not_found }
       end
