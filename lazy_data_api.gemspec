@@ -17,6 +17,8 @@ Gem::Specification.new do |s|
   s.add_dependency "rails", "~> 3.2.11"
 
   s.add_development_dependency "sqlite3"
+  s.add_development_dependency "factory_girl_rails"
+  s.add_development_dependency "faker"
 
   s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.rdoc"]
   s.test_files = Dir["test/**/*"]
