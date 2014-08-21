@@ -3,3 +3,4 @@ class LazyDummy < ActiveRecord::Base
 
   lazy_data
 end
+

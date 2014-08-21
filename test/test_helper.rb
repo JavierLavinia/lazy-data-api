@@ -5,6 +5,8 @@ ENV["RAILS_ROOT"] = File.expand_path("../dummy",  __FILE__)
 
 require File.expand_path("../dummy/config/environment.rb",  __FILE__)
 require "rails/test_help"
+require 'factory_girl_rails'
+require 'faker'
 
 ActionMailer::Base.delivery_method = :test
 ActionMailer::Base.perform_deliveries = true
@@ -17,3 +19,8 @@ ActiveRecord::Migrator.migrate File.expand_path("../dummy/db/migrate/", __FILE__
 
 # Load support files
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
+
+# Test::Unit
+class Test::Unit::TestCase
+  include FactoryGirl::Syntax::Methods
+end

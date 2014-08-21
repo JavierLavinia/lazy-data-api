@@ -1,4 +1,0 @@
-lazy_dummy:
- string: 'lazy dummy string'
- text: 'lazy dummy text'
- integer: 1

@@ -3,15 +3,21 @@ module LazyDataApi
     before_filter :get_resource
 
     def show
-      render json: @resorce.to_json
+      render_params = if @resource
+        { json: @resource.to_api }
+      else
+        { nothing: true, status: :not_found }
+      end
+      render render_params
     end
 
     private
 
     def get_resource
-      # TODO: check if the resource exists and is apiable
       resource_class = params[:resource_name].classify.constantize
-      @resource = resource_class.find_for_api params[:api_id]
+      @resource = if resource_class.apiable?
+        resource_class.find_for_api resource_class.name, params[:api_id]
+      end
     end
   end
 end

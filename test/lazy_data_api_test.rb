@@ -1,8 +1,6 @@
 require 'test_helper'
 
 class LazyDataApiTest < ActiveSupport::TestCase
-  fixtures :lazy_dummies
-
   test "should not be apiable by default" do
     assert !NoLazyDummy.apiable?
   end
@@ -12,16 +10,35 @@ class LazyDataApiTest < ActiveSupport::TestCase
   end
 
   test "should have api_id" do
-    dummy = lazy_dummies(:lazy_dummy)
+    dummy = create :lazy_dummy
 
     assert_respond_to dummy, :api_id
   end
 
-  test "should find api_id" do
-    dummy = LazyDummy.new
-    dummy.api_id = api_id = 'api_id'
-    dummy.save
+  test "should have default api_id" do
+    dummy = create :lazy_dummy
 
-    assert_equal dummy, LazyDummy.find_for_api(api_id)
+    assert_not_nil dummy.api_id
+  end
+
+  test "should have specific api_id" do
+    specific_api_id = 'specific_api_id'
+    dummy = create :lazy_dummy, api_id: specific_api_id
+
+    assert_equal dummy.api_id, specific_api_id
+  end
+
+  test "should find api_id" do
+    dummy = create :lazy_dummy
+
+    assert_equal dummy, LazyDummy.find_for_api(dummy.class.name, dummy.api_id)
+  end
+
+  test "should keep api_id" do
+    dummy = create :lazy_dummy
+    initial_api_id = dummy.api_id
+    dummy.touch
+
+    assert_equal dummy.api_id, initial_api_id
   end
 end
