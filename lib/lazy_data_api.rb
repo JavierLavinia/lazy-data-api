@@ -17,3 +17,4 @@ end
 
 # Require our engine
 require "lazy_data_api/engine"
+require "lazy_data_api/lazy_data"
