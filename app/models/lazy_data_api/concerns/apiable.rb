@@ -4,7 +4,8 @@ module LazyDataApi
       extend ActiveSupport::Concern
 
       included do
-        has_one :lazy_data_api_relation, as: :apiable, class_name: "LazyDataApi::Relation"
+        has_one :lazy_data_api_relation, as: :apiable, class_name: "::LazyDataApi::Relation"
+        validates :lazy_data_api_relation, associated: true
 
         delegate :api_id, :api_id=, to: :lazy_data_api_relation
 
@@ -26,7 +27,7 @@ module LazyDataApi
         build_lazy_data_api_relation if lazy_data_api_relation.blank?
       end
 
-      def  save_api_relation
+      def save_api_relation
         initialize_api_id if api_id.blank?
         lazy_data_api_relation.save if lazy_data_api_relation.changed?
       end
