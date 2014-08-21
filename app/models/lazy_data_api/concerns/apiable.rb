@@ -30,12 +30,7 @@ module LazyDataApi
       end
 
       def save_api_relation
-        initialize_api_id if api_id.blank?
         lazy_data_api_relation.save if lazy_data_api_relation.changed?
-      end
-
-      def initialize_api_id
-        api_id = id
       end
     end
   end
