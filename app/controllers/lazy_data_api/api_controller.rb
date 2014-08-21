@@ -11,7 +11,7 @@ module LazyDataApi
     def get_resource
       # TODO: check if the resource exists and is apiable
       resource_class = params[:resource_name].classify.constantize
-      @resource = resource_class.where(api_id: params[:api_id]).first
+      @resource = resource_class.find_for_api params[:api_id]
     end
   end
 end
