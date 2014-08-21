@@ -9,7 +9,6 @@ module LazyDataApi
 
         delegate :api_id, :api_id=, to: :lazy_data_api_relation
 
-        after_initialize :initialize_api_relation
         after_save :save_api_relation
       end
 
@@ -23,11 +22,12 @@ module LazyDataApi
         end
       end
 
-      def apiable?; true; end
-
-      def initialize_api_relation
-        build_lazy_data_api_relation if lazy_data_api_relation.blank?
+      def initialize attributes = {}, options = {}
+        super
+        build_lazy_data_api_relation attributes[:api_id] if lazy_data_api_relation.blank?
       end
+
+      def apiable?; true; end
 
       def save_api_relation
         lazy_data_api_relation.save if lazy_data_api_relation.changed?

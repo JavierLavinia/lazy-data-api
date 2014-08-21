@@ -21,6 +21,13 @@ class LazyDataApiTest < ActiveSupport::TestCase
     assert_not_nil dummy.api_id
   end
 
+  test "should have specific api_id" do
+    specific_api_id = 'specific_api_id'
+    dummy = create :lazy_dummy, api_id: specific_api_id
+
+    assert_equal dummy.api_id, specific_api_id
+  end
+
   test "should find api_id" do
     dummy = create :lazy_dummy
 
