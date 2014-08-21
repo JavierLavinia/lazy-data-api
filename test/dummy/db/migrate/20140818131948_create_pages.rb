@@ -1,9 +1,9 @@
 class CreatePages < ActiveRecord::Migration
   def change
-    create_table :pages do |t|
-      t.integer :title
-      t.text :body
-      t.integer :position
+    create_table :lazy_dummies do |t|
+      t.integer :integer
+      t.text :text
+      t.string :string
 
       t.timestamps
     end
