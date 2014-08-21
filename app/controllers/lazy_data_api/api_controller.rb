@@ -3,7 +3,7 @@ module LazyDataApi
     before_filter :get_resource
 
     def show
-      render_params =  if @resource
+      render_params = if @resource
         { json: @resource.to_api }
       else
         { nothing: true, status: :not_found }
