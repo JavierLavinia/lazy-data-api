@@ -24,7 +24,7 @@ module LazyDataApi
 
       def initialize attributes = {}, options = {}
         super
-        build_lazy_data_api_relation attributes[:api_id] if lazy_data_api_relation.blank?
+        build_lazy_data_api_relation(api_id: attributes[:api_id]) if lazy_data_api_relation.blank?
       end
 
       def apiable?; true; end
