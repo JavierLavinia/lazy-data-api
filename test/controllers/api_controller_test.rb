@@ -44,6 +44,7 @@ class LazyDataApi::ApiControllerTest < ActionController::TestCase
   test "should create the resource" do
     dummy = build :lazy_dummy
     LazyDataApi::ApiController.any_instance.stubs(:get_resource_data).returns(dummy.to_api)
+    ActionDispatch::Request.any_instance.stubs(:referer).returns('http://host.test')
     post :create, resource_name: :lazy_dummy, api_id: dummy.api_id, use_route: :lazy_data_api
 
     assert_response :success
