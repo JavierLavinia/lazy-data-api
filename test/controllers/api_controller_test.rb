@@ -47,6 +47,6 @@ class LazyDataApi::ApiControllerTest < ActionController::TestCase
     post :create, resource_name: :lazy_dummy, api_id: dummy.api_id
 
     assert_response :success
-    assert_not_nil LazyDummy.find_for_api(dummy.class.name, dummy.api_id)
+    assert_not_nil LazyDummy.find_for_api(dummy.api_id)
   end
 end

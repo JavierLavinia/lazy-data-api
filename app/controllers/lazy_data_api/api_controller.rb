@@ -39,7 +39,7 @@ module LazyDataApi
     def get_resource
       resource_class = params[:resource_name].classify.constantize
       @resource = if resource_class.apiable?
-        resource_class.find_for_api resource_class.name, params[:api_id]
+        resource_class.find_for_api params[:api_id]
       end
     end
 
