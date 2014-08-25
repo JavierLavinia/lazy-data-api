@@ -1,7 +1,8 @@
 require 'net/http'
 
 module LazyDataApi
-  class ApiController < ::ApplicationController
+  class ApiController < ApplicationController
+    before_filter :check_referrer, only: :create
     before_filter :get_resource, only: :show
 
     def show
@@ -14,16 +15,19 @@ module LazyDataApi
     end
 
     def create
-      url_params = {
-        protocol: request.protocol,
-        host: request.host,
-        port: request.port,
+      # A filter checksfor referer existence
+      # Maybe is better use a default host when is empty
+      server_url = URI(request.referer)
+      server_url_params = {
+        protocol: "#{server_url.scheme}://",
+        host: server_url.host,
+        port: server_url.port,
         only_path: false,
         resource_name: params[:resource_name],
         api_id: params[:api_id]
       }
 
-      resource_data = get_resource_data main_app.lazy_data_api_url(url_params)
+      resource_data = get_resource_data lazy_data_api_url(server_url_params)
       resource_class = params[:resource_name].classify.constantize
 
       render_params = if resource_class.create resource_data[params[:resource_name]]
@@ -46,8 +50,12 @@ module LazyDataApi
     def get_resource_data url
       uri = URI.parse url
       request = Net::HTTP::Get.new(uri.to_s)
-      response = Net::HTTP.start(url.host, url.port) {|http| http.request(request) }
+      response = Net::HTTP.start(uri.host, uri.port) {|http| http.request(request) }
       ActiveSupport::JSON.decode(response.body)
+    end
+
+    def check_referrer
+      render json: { error: 'Referer url is needed on request' } if request.referer.blank?
     end
   end
 end
