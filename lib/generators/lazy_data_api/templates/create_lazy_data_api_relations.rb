@@ -1,10 +1,9 @@
 class CreateLazyDataApiRelations < ActiveRecord::Migration
   def self.up
-    create_table :lazy_data_api_relations do |t|
+    create_table :lazy_data_api_relations, id: false do |t|
       t.string :api_id
       t.integer :apiable_id
       t.string  :apiable_type
-      t.timestamps
     end
   end
 
