@@ -15,12 +15,15 @@ module LazyDataApi
 
     def create
       url_params = {
-        host: "http://localhost:3000",
+        protocol: request.protocol,
+        host: request.host,
+        port: request.port,
         only_path: false,
         resource_name: params[:resource_name],
         api_id: params[:api_id]
       }
-      resource_data = get_resource_data lazy_data_api_path(url_params)
+
+      resource_data = get_resource_data main_app.lazy_data_api_url(url_params)
       resource_class = params[:resource_name].classify.constantize
 
       render_params = if resource_class.create resource_data[params[:resource_name]]
