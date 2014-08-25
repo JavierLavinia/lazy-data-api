@@ -31,7 +31,7 @@ class LazyDataApiTest < ActiveSupport::TestCase
   test "should find api_id" do
     dummy = create :lazy_dummy
 
-    assert_equal dummy, LazyDummy.find_for_api(dummy.class.name, dummy.api_id)
+    assert_equal dummy, LazyDummy.find_for_api(dummy.api_id)
   end
 
   test "should keep api_id" do
