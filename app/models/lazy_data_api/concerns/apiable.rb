@@ -15,8 +15,8 @@ module LazyDataApi
       module ClassMethods
         def apiable?; true; end
 
-          includes(:lazy_data_api_relation)
         def find_for_api api_id
+          joins(:lazy_data_api_relation)
           .where(lazy_data_api_relations: { api_id: api_id } )
           .first
         end
