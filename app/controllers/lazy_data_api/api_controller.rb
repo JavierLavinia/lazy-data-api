@@ -27,7 +27,7 @@ module LazyDataApi
         api_id: params[:api_id]
       }
 
-      resource_data = get_resource_data lazy_data_api_url(server_url_params)
+      resource_data = get_resource_data show_resource_url(server_url_params)
       resource_class = params[:resource_name].classify.constantize
 
       render_params = if resource_class.create resource_data[params[:resource_name]]

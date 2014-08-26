@@ -9,6 +9,7 @@ module LazyDataApi
 
         delegate :api_id, :api_id=, to: :lazy_data_api_relation
 
+        after_initialize :build_lazy_data_api_relation, if: "lazy_data_api_relation.blank?"
         after_save :save_api_relation
       end
 
@@ -24,7 +25,8 @@ module LazyDataApi
 
       def initialize attributes = {}, options = {}
         super
-        build_lazy_data_api_relation(api_id: attributes[:api_id]) if lazy_data_api_relation.blank?
+        build_lazy_data_api_relation if lazy_data_api_relation.blank?
+        lazy_data_api_relation.assign_attributes(api_id: attributes[:api_id]) if attributes[:api_id]
       end
 
       def apiable?; true; end
