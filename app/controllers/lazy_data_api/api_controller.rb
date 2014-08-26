@@ -45,11 +45,16 @@ module LazyDataApi
       end
     end
 
-    # Get resource class from params
+    # Memoize resource class from params
+    # Namespaces params is the url part with all the class namespaces
+    # /namespace1/namespace2/my_class/api_id turns into
+    # Namespace1::Namespace2::MyClass
     def resource_class
-      resource_parts = params[:namespaces] ? params[:namespaces].split('/') : []
-      resource_parts << params[:resource_name]
-      resource_parts.map(&:classify).join('::').constantize
+      @resource_class ||= begin
+        resource_parts = params[:namespaces] ? params[:namespaces].split('/') : []
+        resource_parts << params[:resource_name]
+        resource_parts.map(&:classify).join('::').constantize
+      end
     end
 
     def get_resource_data url
