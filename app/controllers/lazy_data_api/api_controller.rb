@@ -23,13 +23,12 @@ module LazyDataApi
         host: server_url.host,
         port: server_url.port,
         only_path: false,
+        namespaces: params[:namespaces],
         resource_name: params[:resource_name],
         api_id: params[:api_id]
       }
 
       resource_data = get_resource_data show_resource_url(server_url_params)
-      resource_class = params[:resource_name].classify.constantize
-
       render_params = if resource_class.create resource_data[params[:resource_name]]
         { nothing: true, status: :ok }
       else
@@ -41,10 +40,16 @@ module LazyDataApi
     private
 
     def get_resource
-      resource_class = params[:resource_name].classify.constantize
       @resource = if resource_class.apiable?
         resource_class.find_for_api params[:api_id]
       end
+    end
+
+    # Get resource class from params
+    def resource_class
+      resource_parts = params[:namespaces] ? params[:namespaces].split('/') : []
+      resource_parts << params[:resource_name]
+      resource_parts.map(&:classify).join('::').constantize
     end
 
     def get_resource_data url
