@@ -11,6 +11,13 @@ module LazyDataApi
 
         after_initialize :build_lazy_data_api_relation, if: "lazy_data_api_relation.blank?"
         after_save :save_api_relation
+
+        scope :without_api_id, -> {
+          left_join = "LEFT JOIN #{LazyDataApi::Relation.table_name} " \
+                          "ON #{LazyDataApi::Relation.table_name}.apiable_id = #{self.table_name}.id " \
+                          "AND #{LazyDataApi::Relation.table_name}.apiable_type = '#{self.name}'"
+          joins(left_join).where(lazy_data_api_relations: {api_id: nil})
+        }
       end
 
       module ClassMethods
@@ -23,7 +30,7 @@ module LazyDataApi
         end
 
         def create_api_ids
-          self.all.each do |apiable|
+          self.without_api_id.each do |apiable|
             apiable.create_lazy_data_api_relation if apiable.lazy_data_api_relation.blank?
           end
         end
