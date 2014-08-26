@@ -18,8 +18,14 @@ module LazyDataApi
 
         def find_for_api api_id
           joins(:lazy_data_api_relation)
-          .where(lazy_data_api_relations: { api_id: api_id } )
+          .where(lazy_data_api_relations: { api_id: api_id })
           .first
+        end
+
+        def create_api_ids
+          self.all.each do |apiable|
+            apiable.create_lazy_data_api_relation if apiable.lazy_data_api_relation.blank?
+          end
         end
       end
 
