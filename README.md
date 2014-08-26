@@ -43,10 +43,6 @@ Ask your model:
   MyModel.apiable?
 ```
 
-Import data:
-
-Add to Import-O-Matic your model:
-
 ## :video_game: Configure
 
 ### :book: Configure options:
