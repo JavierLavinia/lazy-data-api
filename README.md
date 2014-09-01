@@ -43,6 +43,20 @@ Ask your model:
   MyModel.apiable?
 ```
 
+Add buttons helpers into your application
+
+```ruby
+  class ApplicationController < ActionController::Base
+    helper LazyDataApi::ButtonsHelper
+  ...
+```
+
+And use the helper 'send_lazy_data resource, options' to print send buttons:
+
+```ruby
+  send_lazy_data post, remote: true
+```
+
 ## :video_game: Configure
 
 ### :book: Configure options:
