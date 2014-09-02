@@ -30,7 +30,8 @@ module LazyDataApi
       }
 
       resource_data = get_resource_data show_resource_url(server_url_params)
-      render_params = if resource_class.create_api_resource resource_data[params[:resource_name]], server_host
+      resource = resource_class.create_api_resource resource_data[params[:resource_name]], server_host
+      render_params = if resource.valid?
         { nothing: true, status: :ok }
       else
         { nothing: true, status: :not_found }
