@@ -34,6 +34,10 @@ module LazyDataApi
             apiable.create_lazy_data_api_relation if apiable.lazy_data_api_relation.blank?
           end
         end
+
+        def create_api_resource attributes = {}, server_host = nil
+          create attributes
+        end
       end
 
       def initialize attributes = {}, options = {}
