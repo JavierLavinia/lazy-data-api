@@ -18,6 +18,7 @@ module LazyDataApi
       # A filter checksfor referer existence
       # Maybe is better use a default host when is empty
       server_url = URI(request.referer)
+      server_host = "#{server_url.scheme}://#{server_url.host}:#{server_url.port}"
       server_url_params = {
         protocol: "#{server_url.scheme}://",
         host: server_url.host,
@@ -29,7 +30,7 @@ module LazyDataApi
       }
 
       resource_data = get_resource_data show_resource_url(server_url_params)
-      render_params = if resource_class.create resource_data[params[:resource_name]]
+      render_params = if resource_class.create_api_resource resource_data[params[:resource_name]], server_host
         { nothing: true, status: :ok }
       else
         { nothing: true, status: :not_found }
