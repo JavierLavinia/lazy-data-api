@@ -51,6 +51,10 @@ module LazyDataApi
       def to_api
         as_json methods: :api_id, except: [:id, :created_at, :updated_at]
       end
+
+      def api_servers
+        self.class.api_options.api_servers
+      end
     end
   end
 end
