@@ -4,11 +4,11 @@ Fetch/send data from/to other Rails 3.2 applications.
 
 Features:
 
- - Simple API.
- - Dynamic routes.
- - Class namespaces support.
- - Helpers.
- - Differents configurations for each model.
+* Simple API.
+* Dynamic routes.
+* Class namespaces support.
+* Helpers.
+* Differents configurations for each model.
  
  Lazy-data-api is in development for a ruby 1.9.3 and rails 3.2 project, so it is only tested in this environment at the moment.
 
@@ -53,7 +53,7 @@ Add buttons helpers into your application
 
 And use the helper 'send_lazy_data resource, options' in your views to print the send buttons:
 
-NOTE: You will need to add a translation for the text button in the view. 
+*NOTE*: You will need to create a translation for the text button in the view. 
 
 ```ruby
   send_lazy_data post, remote: true
@@ -65,7 +65,7 @@ You can use a class to configure the api. Create a class from LazyDataApi::Optio
 
 ```ruby
   class DefaultApiOptions < LazyDataApi::Options
-    server :eu_server, protocol: 'http://', host: 'localhost', port: '3000'
+    server :eu_server, protocol: 'http://', host: 'www.eu_server.com'
   end
 ```
 
@@ -90,7 +90,8 @@ Configure the servers to send data with 'server name, url_options':
 
 ```ruby
   class DefaultApiOptions < LazyDataApi::Options
-    server :eu_server, protocol: 'http://', host: 'localhost', port: '3000'
+    server :eu_server, protocol: 'http://', host: 'www.eu_server.com'
+    server :us_server, protocol: 'http://', host: 'www.us_server.com'
   end
 ```
 
