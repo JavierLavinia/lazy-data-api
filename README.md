@@ -70,10 +70,10 @@ And use the helper 'send_lazy_data resource, options' in your views to print the
 *NOTE*: You will need to create a translation for the text button in the view. 
 
 ```ruby
-  send_lazy_data post, remote: true
+  send_lazy_data @object, remote: true
 ```
 
-By default, with a http GET request on '/lazy-data-api/my_model/api_id', the gem exports model instance data in json format:
+By default, with a GET http request on '/lazy-data-api/my_model/api_id', the gem returns the model instance data find by the api_id in this json format:
 
 ```ruby
   # Instance method
@@ -82,7 +82,7 @@ By default, with a http GET request on '/lazy-data-api/my_model/api_id', the gem
   end
 ```
 
-And with a http POST request on '/lazy-data-api/my_model/api_id', the gem make a request GET to the referer, and create an instance with json data:
+And with a POST http request on '/lazy-data-api/my_model/api_id', the gem make the same request to the referer (but GET), and create an instance with json data received:
 
 ```ruby
   # Class method
