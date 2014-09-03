@@ -3,14 +3,13 @@
 Fetch/send data from/to other Rails 3.2 applications.
 
 Features:
-
-* Simple API.
-* Dynamic routes.
-* Class namespaces support.
-* Helpers.
-* Differents configurations for each model.
+ * Simple API.
+ * Dynamic routes.
+ * Class namespaces support.
+ * Helpers.
+ * Differents configurations for each model.
  
- Lazy-data-api is in development for a ruby 1.9.3 and rails 3.2 project, so it is only tested in this environment at the moment.
+Lazy-data-api is in development for a ruby 1.9.3 and rails 3.2 project, so it is only tested in this environment at the moment.
 
 ## :floppy_disk: Install
 
@@ -27,7 +26,16 @@ Install migration and configuration files
 ```
 This adds the migration for a polymorphic association with the api ids.
 
-Add to lazy data your model:
+And mount the engine routes into your application routes.rb:
+
+```ruby
+  Dummy::Application.routes.draw do
+   mount LazyDataApi::Engine => "/lazy-data-api"
+    ...
+  end
+```
+
+Then, you can add lazy data to your model:
 
 ```ruby
   class MyModel < ActiveRecord::Base
@@ -35,6 +43,12 @@ Add to lazy data your model:
     lazy_data
     ...
   end
+```
+
+And you just need to save your model to create new api_ids
+
+```ruby
+  MyModel.all.map(&:save)
 ```
 
 Ask your model:
@@ -58,6 +72,26 @@ And use the helper 'send_lazy_data resource, options' in your views to print the
 ```ruby
   send_lazy_data post, remote: true
 ```
+
+By default, with a http GET request on '/lazy-data-api/my_model/api_id', the gem exports model instance data in json format:
+
+```ruby
+  # Instance method
+  def to_api
+    as_json methods: :api_id, except: [:id, :created_at, :updated_at]
+  end
+```
+
+And with a http POST request on '/lazy-data-api/my_model/api_id', the gem make a request GET to the referer, and create an instance with json data:
+
+```ruby
+  # Class method
+  def create_api_resource attributes = {}, server_host = nil
+    create attributes
+  end
+```
+
+You can override this methods in each model if you need custom behavior.
 
 ## :video_game: Configure
 
@@ -109,7 +143,8 @@ You can use diferent environments and flags:
 
 # :white_check_mark: TODO:
 
-- Better tests.
-- Better logs.
-- More ruby and rails versions.
+* Security.
+* Better tests.
+* Better logs.
+* More ruby and rails versions.
 ...
