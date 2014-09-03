@@ -51,7 +51,9 @@ Add buttons helpers into your application
   ...
 ```
 
-And use the helper 'send_lazy_data resource, options' to print send buttons:
+And use the helper 'send_lazy_data resource, options' in your views to print the send buttons:
+
+NOTE: You will need to add a translation for the text button in the view. 
 
 ```ruby
   send_lazy_data post, remote: true
@@ -59,7 +61,50 @@ And use the helper 'send_lazy_data resource, options' to print send buttons:
 
 ## :video_game: Configure
 
+You can use a class to configure the api. Create a class from LazyDataApi::Options in 'app/lazy_data_api_options', for example DefaultApiOptions:
+
+```ruby
+  class DefaultApiOptions < LazyDataApi::Options
+    server :eu_server, protocol: 'http://', host: 'localhost', port: '3000'
+  end
+```
+
+And pass it to the model:
+
+```ruby
+  class MyModel < ActiveRecord::Base
+    ...
+    lazy_data DefaultApiOptions
+    ...
+  end
+```
+
+You can create a class for each model.
+
 ### :book: Configure options:
+
+Configure the servers to send data with 'server name, url_options':
+
+* name: just a name for the server.
+* url_options: a hash with options for an url helper, 'host' at least is needed.
+
+```ruby
+  class DefaultApiOptions < LazyDataApi::Options
+    server :eu_server, protocol: 'http://', host: 'localhost', port: '3000'
+  end
+```
+
+You can use diferent environments and flags: 
+
+```ruby
+  class DefaultApiOptions < LazyDataApi::Options
+    if Rails.application.config.main_server?
+      server :eu_server, protocol: 'http://', host: 'localhost', port: '3000' if Rails.env.development?
+      server :eu_server, protocol: 'https://', host: 'eu_server.staging.com' if Rails.env.staging?
+      server :eu_server, protocol: 'https://', host: 'www.eu_server.com' if Rails.env.production?
+    end
+  end
+```
 
 # :white_check_mark: TODO:
 
