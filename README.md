@@ -4,13 +4,13 @@ Fetch/send data from/to other Rails 3.2 applications.
 
 Features:
 
- - Supports multiple formats (only csv now :disappointed:).
- - Clean configuration (external class).
- - Text logs.
- - Multiple actions per row (create, update, delete).
- - Globalize support.
-
-Import-O-Matic is in development for a ruby 2 and rails 4 project, so it is only tested in this environment at the moment.
+ - Simple API.
+ - Dynamic routes.
+ - Class namespaces support.
+ - Helpers.
+ - Differents configurations for each model.
+ 
+ Lazy-data-api is in development for a ruby 1.9.3 and rails 3.2 project, so it is only tested in this environment at the moment.
 
 ## :floppy_disk: Install
 
