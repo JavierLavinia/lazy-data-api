@@ -43,7 +43,9 @@ module LazyDataApi
       def initialize attributes = {}, options = {}
         super
         build_lazy_data_api_relation if lazy_data_api_relation.blank?
-        lazy_data_api_relation.assign_attributes(api_id: attributes["api_id"]) if attributes && attributes["api_id"]
+        # Problem with rails version and attributes keys
+        api_id = (attributes["api_id"] || attributes[:api_id]) if attributes
+        lazy_data_api_relation.assign_attributes(api_id: api_id) if api_id
       end
 
       def apiable?; true; end
