@@ -31,7 +31,11 @@ module LazyDataApi
 
         def create_api_ids
           self.without_api_id.each do |apiable|
-            apiable.create_lazy_data_api_relation if apiable.lazy_data_api_relation.blank?
+            if apiable.lazy_data_api_relation.blank?
+              apiable.create_lazy_data_api_relation
+            elsif apiable.lazy_data_api_relation.new_record?
+              apiable.lazy_data_api_relation.save
+            end
           end
         end
 
