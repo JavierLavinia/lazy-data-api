@@ -41,4 +41,29 @@ class LazyDataApiTest < ActiveSupport::TestCase
 
     assert_equal dummy.api_id, initial_api_id
   end
+
+  test "should keep api_id when create ids" do
+    dummy = create :lazy_dummy
+    initial_api_id = dummy.api_id
+    LazyDummy.create_api_ids
+
+    assert_equal dummy.api_id, initial_api_id
+  end
+
+  test "should create api_id when create ids" do
+    dummy = create :lazy_dummy
+    dummy.lazy_data_api_relation.destroy
+    LazyDummy.create_api_ids
+
+    assert_not_nil dummy.api_id
+  end
+
+  test "should create permanent api_id when create ids" do
+    dummy = create :lazy_dummy
+    dummy.lazy_data_api_relation.destroy
+    LazyDummy.create_api_ids
+
+    initial_api_id = dummy.reload.api_id
+    assert_equal dummy.reload.api_id, initial_api_id
+  end
 end

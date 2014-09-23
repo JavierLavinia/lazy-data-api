@@ -31,7 +31,11 @@ module LazyDataApi
 
         def create_api_ids
           self.without_api_id.each do |apiable|
-            apiable.create_lazy_data_api_relation if apiable.lazy_data_api_relation.blank?
+            if apiable.lazy_data_api_relation.blank?
+              apiable.create_lazy_data_api_relation
+            elsif apiable.lazy_data_api_relation.new_record?
+              apiable.lazy_data_api_relation.save
+            end
           end
         end
 
@@ -43,7 +47,9 @@ module LazyDataApi
       def initialize attributes = {}, options = {}
         super
         build_lazy_data_api_relation if lazy_data_api_relation.blank?
-        lazy_data_api_relation.assign_attributes(api_id: attributes["api_id"]) if attributes && attributes["api_id"]
+        # Problem with rails version and attributes keys
+        api_id = (attributes["api_id"] || attributes[:api_id]) if attributes
+        lazy_data_api_relation.assign_attributes(api_id: api_id) if api_id
       end
 
       def apiable?; true; end
