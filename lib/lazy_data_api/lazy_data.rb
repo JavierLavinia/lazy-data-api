@@ -9,7 +9,7 @@ module LazyDataApi
 
     module ClassMethods
       def lazy_data api_options_class = LazyDataApi::Options
-        include LazyDataApi::Concerns::Apiable
+        include ::LazyDataApi::Concerns::Apiable
         cattr_accessor :api_options
         self.api_options = api_options_class.new
       end
