@@ -2,8 +2,7 @@ require 'net/http'
 
 module LazyDataApi
   class ApiController < ApplicationController
-    before_filter :check_referrer, only: :create
-    before_filter :get_resource, only: :show
+    before_filter :get_resource, only: [:show, :forward]
 
     def show
       render_params = if @resource
@@ -14,23 +13,25 @@ module LazyDataApi
       render render_params
     end
 
+    def forward
+      url_options = @resource.api_servers[params[:server_name].to_sym]
+      unless url_options.blank?
+        server_url_params = url_options.merge only_path: false,
+          namespaces: params[:namespaces],
+          resource_name: params[:resource_name],
+          api_id: params[:api_id]
+        response = create_resource @resource.to_api.to_json, create_resource_url(server_url_params), request.referer
+        render json: response.body, status: get_response_status(response)
+      else
+        render nothing: true, status: :not_found
+      end
+    end
+
     def create
-      # A filter checksfor referer existence
-      # Maybe is better use a default host when is empty
+      resource_data = params[params[:resource_name]] if params[:resource_name]
       server_url = URI(request.referer)
       server_host = "#{server_url.scheme}://#{server_url.host}:#{server_url.port}"
-      server_url_params = {
-        protocol: "#{server_url.scheme}://",
-        host: server_url.host,
-        port: server_url.port,
-        only_path: false,
-        namespaces: params[:namespaces],
-        resource_name: params[:resource_name],
-        api_id: params[:api_id]
-      }
-
-      resource_data = get_resource_data show_resource_url(server_url_params)
-      resource = resource_class.create_api_resource resource_data[params[:resource_name]], server_host
+      resource = resource_class.create_api_resource resource_data, server_host
       render_params = if resource.valid?
         { nothing: true, status: :ok }
       else
@@ -61,13 +62,29 @@ module LazyDataApi
 
     def get_resource_data url
       uri = URI.parse url
-      request = Net::HTTP::Get.new(uri.to_s)
-      response = Net::HTTP.start(uri.host, uri.port) {|http| http.request(request) }
+      http = Net::HTTP.new(uri.host, uri.port)
+      request = Net::HTTP::Get.new(uri.path)
+      response = http.request(request)
       ActiveSupport::JSON.decode(response.body)
     end
 
-    def check_referrer
-      render json: { error: 'Referer url is needed on request' } if request.referer.blank?
+    def create_resource data, url, referer
+      uri = URI.parse url
+      http = Net::HTTP.new(uri.host, uri.port)
+      request = Net::HTTP::Post.new(uri.path, {
+        'Referer' => referer,
+        'Content-Type' =>'application/json'
+      })
+      request.body = data
+      http.request(request)
+    end
+
+    def get_response_status response
+      case response
+        when Net::HTTPOK then :ok
+        when Net::HTTPNotFound then :not_found
+        else :error
+      end
     end
   end
 end
