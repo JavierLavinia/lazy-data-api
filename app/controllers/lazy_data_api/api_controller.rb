@@ -63,7 +63,7 @@ module LazyDataApi
     def get_resource_data url
       uri = URI.parse url
       http = Net::HTTP.new(uri.host, uri.port)
-      request = Net::HTTP::Get.new(uri.path)
+      request = Net::HTTP::Get.new(uri.to_s)
       response = http.request(request)
       ActiveSupport::JSON.decode(response.body)
     end
