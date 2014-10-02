@@ -64,6 +64,8 @@ module LazyDataApi
       uri = URI.parse url
       http = Net::HTTP.new(uri.host, uri.port)
       request = Net::HTTP::Get.new(uri.to_s)
+      request.basic_auth uri.user, uri.password unless uri.user.blank? || uri.password.blank?
+      request.use_ssl = true if uri.scheme == 'https'
       response = http.request(request)
       ActiveSupport::JSON.decode(response.body)
     end
@@ -73,8 +75,10 @@ module LazyDataApi
       http = Net::HTTP.new(uri.host, uri.port)
       request = Net::HTTP::Post.new(uri.path, {
         'Referer' => referer,
-        'Content-Type' =>'application/json'
+        'Content-Type' => 'application/json'
       })
+      request.basic_auth uri.user, uri.password unless uri.user.blank? || uri.password.blank?
+      request.use_ssl = true if uri.scheme == 'https'
       request.body = data
       http.request(request)
     end
