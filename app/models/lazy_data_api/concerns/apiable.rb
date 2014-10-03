@@ -26,6 +26,7 @@ module LazyDataApi
         def find_for_api api_id
           joins(:lazy_data_api_relation)
           .where(lazy_data_api_relations: { api_id: api_id })
+          .readonly(false)
           .first
         end
 
