@@ -65,15 +65,21 @@ Add buttons helpers into your application
   ...
 ```
 
-And use the helper 'send_lazy_data resource, options' in your views to print the send buttons:
-
-*NOTE*: You will need to create a translation for the text button in the view. 
+And use the helper 'create_lazy_data resource, options' or 'create_lazy_data resource, options' in your views to print the send buttons:
 
 ```ruby
-  send_lazy_data @object, remote: true
+  create_lazy_data @object, remote: true
+  ...
+  update_lazy_data @object, remote: true
 ```
 
-By default, with a GET http request on '/lazy-data-api/my_model/api_id', the gem returns the model instance data find by the api_id in this json format:
+You will need to create a translation for the text button in the view (actios availables are 'create' and 'update'):
+* Custom view translation: ".#{action}_lazy_data.#{server_name}"
+* Default translation: "shared.#{action}_lazy_data.#{server_name}"
+
+## :rocket: Working
+
+By default, with a GET http request to '/lazy-data-api/:my_model/:api_id', the gem returns the model instance data find by the api_id in this json format:
 
 ```ruby
   # Instance method
@@ -82,7 +88,9 @@ By default, with a GET http request on '/lazy-data-api/my_model/api_id', the gem
   end
 ```
 
-And with a POST http request on '/lazy-data-api/my_model/api_id', the gem make the same request to the referer (but GET), and create an instance with json data received:
+And with a GET http request to '/lazy-data-api/:my_model/:api_id/forward/:server_name', the app make the POST request to the indicated server name (see configure options), with .to_api json as POST data.
+
+A POST http request to '/lazy-data-api/:my_model/:api_id' with resource json as POST data, will create the resource calling:
 
 ```ruby
   # Class method
@@ -91,7 +99,18 @@ And with a POST http request on '/lazy-data-api/my_model/api_id', the gem make t
   end
 ```
 
-You can override this methods in each model if you need custom behavior.
+You can override this methods in each model if you need custom behavior. Server host comes from request referer and can be use for fetch images from origin server for example.
+
+A PUT http request to '/lazy-data-api/:my_model/:api_id' with resource json as POST data, will update the resource if exists by api_id calling:
+
+```ruby
+  # Instance method
+  def update_api_resource attributes = {}, server_host = nil
+    update_attributes attributes
+  end
+```
+
+You can override this methods in each model if you need custom behavior. Server host comes from request referer and can be use for fetch images from origin server for example.
 
 ## :video_game: Configure
 

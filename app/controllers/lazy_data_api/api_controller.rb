@@ -5,23 +5,22 @@ module LazyDataApi
     before_filter :get_resource, only: [:show, :forward]
 
     def show
-      render_params = if @resource
-        { json: @resource.to_api }
+      if @resource
+        render json: @resource.to_api
       else
-        { nothing: true, status: :not_found }
+        render nothing: true, status: :not_found
       end
-      render render_params
     end
 
     def forward
-      url_options = @resource.api_servers[params[:server_name].to_sym]
-      unless url_options.blank?
-        server_url_params = url_options.merge only_path: false,
-          namespaces: params[:namespaces],
-          resource_name: params[:resource_name],
-          api_id: params[:api_id]
-        response = create_resource @resource.to_api.to_json, create_resource_url(server_url_params), request.referer
-        render json: response.body, status: get_response_status(response)
+      server_url_options = @resource.server_url_options params[:server_name]
+      unless server_url_options.blank?
+        response = send_resource params[:forward_action], @resource.to_api.to_json, create_resource_url(server_url_options), request.referer
+        unless response.blank?
+          render json: response.body, status: get_response_status(response)
+        else
+          render json: { error: 'No action available' }, status: :error
+        end
       else
         render nothing: true, status: :not_found
       end
@@ -32,12 +31,28 @@ module LazyDataApi
       server_url = URI(request.referer)
       server_host = "#{server_url.scheme}://#{server_url.host}:#{server_url.port}"
       resource = resource_class.create_api_resource resource_data, server_host
-      render_params = if resource.valid?
-        { nothing: true, status: :ok }
+      if resource.valid?
+        render nothing: true, status: :ok
       else
-        { nothing: true, status: :not_found }
+        render nothing: true, status: :not_found
       end
-      render render_params
+    end
+
+    def update
+      resource_data = params[params[:resource_name]] if params[:resource_name]
+      resource = resource_class.find_for_api params[:api_id]
+      unless resource.blank?
+        server_url = URI(request.referer)
+        server_host = "#{server_url.scheme}://#{server_url.host}:#{server_url.port}"
+        resource.update_api_resource resource_data, server_host
+        if resource.valid?
+          render nothing: true, status: :ok
+        else
+          render nothing: true, status: :error
+        end
+      else
+        render nothing: true, status: :not_found
+      end
     end
 
     private
@@ -70,17 +85,26 @@ module LazyDataApi
       ActiveSupport::JSON.decode(response.body)
     end
 
-    def create_resource data, url, referer
-      uri = URI.parse url
-      http = Net::HTTP.new(uri.host, uri.port)
-      request = Net::HTTP::Post.new(uri.path, {
-        'Referer' => referer,
-        'Content-Type' => 'application/json'
-      })
-      request.basic_auth uri.user, uri.password unless uri.user.blank? || uri.password.blank?
-      request.use_ssl = true if uri.scheme == 'https'
-      request.body = data
-      http.request(request)
+    def send_resource action, data, url, referer
+      request_class = case action
+        when 'create' then Net::HTTP::Post
+        when 'update' then Net::HTTP::Put
+        else nil
+      end
+      unless request_class.blank?
+        uri = URI.parse url
+        http = Net::HTTP.new(uri.host, uri.port)
+        request = request_class.new(uri.path, {
+          'Referer' => referer,
+          'Content-Type' => 'application/json'
+        })
+        request.basic_auth uri.user, uri.password unless uri.user.blank? || uri.password.blank?
+        request.use_ssl = true if uri.scheme == 'https'
+        request.body = data
+        http.request(request)
+      else
+        nil
+      end
     end
 
     def get_response_status response
