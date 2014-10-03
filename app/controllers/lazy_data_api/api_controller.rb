@@ -5,12 +5,11 @@ module LazyDataApi
     before_filter :get_resource, only: [:show, :forward]
 
     def show
-      render_params = if @resource
-        { json: @resource.to_api }
+      if @resource
+        render json: @resource.to_api
       else
-        { nothing: true, status: :not_found }
+        render nothing: true, status: :not_found
       end
-      render render_params
     end
 
     def forward
@@ -32,12 +31,11 @@ module LazyDataApi
       server_url = URI(request.referer)
       server_host = "#{server_url.scheme}://#{server_url.host}:#{server_url.port}"
       resource = resource_class.create_api_resource resource_data, server_host
-      render_params = if resource.valid?
-        { nothing: true, status: :ok }
+      if resource.valid?
+        render nothing: true, status: :ok
       else
-        { nothing: true, status: :not_found }
+        render nothing: true, status: :not_found
       end
-      render render_params
     end
 
     private
