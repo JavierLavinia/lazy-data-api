@@ -66,6 +66,21 @@ module LazyDataApi
       def api_servers
         self.class.api_options.api_servers
       end
+
+      def url_options
+        namespaces = self.class.name.deconstantize.underscore.gsub('::','/')
+        resource_name = self.class.name.demodulize.underscore
+        {
+          namespaces: (namespaces unless namespaces.blank?),
+          resource_name: resource_name,
+          api_id: self.api_id
+        }
+      end
+
+      def server_url_options server_name
+        server_url_options = self.api_servers[server_name.to_sym]
+        server_url_options.blank? ? {} : server_url_options.merge(self.url_options)
+      end
     end
   end
 end
