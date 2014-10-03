@@ -45,6 +45,10 @@ module LazyDataApi
         end
       end
 
+      def update_api_resource attributes = {}, server_host = nil
+        update_attributes attributes
+      end
+
       def initialize attributes = {}, options = {}
         super
         build_lazy_data_api_relation if lazy_data_api_relation.blank?
