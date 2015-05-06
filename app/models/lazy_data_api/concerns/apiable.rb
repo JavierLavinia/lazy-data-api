@@ -4,7 +4,8 @@ module LazyDataApi
       extend ActiveSupport::Concern
 
       included do
-        has_one :lazy_data_api_relation, as: :apiable, class_name: "::LazyDataApi::Relation"
+        has_one :lazy_data_api_relation, as: :apiable,
+          class_name: "::LazyDataApi::Relation", dependent: :destroy
         validates :lazy_data_api_relation, associated: true
 
         delegate :api_id, :api_id=, to: :lazy_data_api_relation
