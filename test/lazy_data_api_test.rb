@@ -75,4 +75,13 @@ class LazyDataApiTest < ActiveSupport::TestCase
 
     assert_nil LazyDataApi::Relation.where(api_id: api_id).first
   end
+
+  test "should not create api_id if creation fails" do
+    dummy = build :lazy_dummy, integer: 'a'
+    dummy.save
+
+    assert !dummy.valid?
+    assert_not_nil dummy.api_id
+    assert_nil LazyDataApi::Relation.where(api_id: dummy.api_id).first
+  end
 end
