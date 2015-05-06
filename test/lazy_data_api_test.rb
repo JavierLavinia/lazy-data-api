@@ -66,4 +66,13 @@ class LazyDataApiTest < ActiveSupport::TestCase
     initial_api_id = dummy.reload.api_id
     assert_equal dummy.reload.api_id, initial_api_id
   end
+
+  test "should remove api_id destroy" do
+    dummy = create :lazy_dummy
+
+    api_id = dummy.api_id
+    dummy.destroy
+
+    assert_nil LazyDataApi::Relation.where(api_id: api_id).first
+  end
 end
